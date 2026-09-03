@@ -1,4 +1,4 @@
-# 📞 Call Time Analyzer
+# 📞 How Long We Talked
 
 여자친구와 통화한 기록을 가지고 **우리는 얼마나 오래 통화했을까?** 를 알아보기 위해 만든 간단한 R 프로젝트.
 
