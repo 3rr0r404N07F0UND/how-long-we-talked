@@ -4,7 +4,7 @@ format_time <- function(total_seconds) {
   seconds <- total_seconds %% 60
 
   if (hours > 0) {
-    sprintf("%d시간 %d분 %d초", hours, minutes, seconds)
+    sprintf("%s시간 %d분 %d초", format(hours, big.mark = ","), minutes, seconds)
   } else if (minutes > 0) {
     sprintf("%d분 %d초", minutes, seconds)
   } else {
