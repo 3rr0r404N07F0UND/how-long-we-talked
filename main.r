@@ -54,7 +54,7 @@ cat(sprintf(
 ), end = "\n")
 cat(sprintf("평균 통화 시간: %s (회당)", format_time(as.integer(result_list$average_seconds))), end = "\n")
 cat(sprintf("중앙값(중위수): %s", format_time(as.integer(result_list$median_seconds))), end = "\n")
-cat(sprintf("분산: %s초²", as.integer(result_list$variance)), end = "\n")
+cat(sprintf("분산: %s초²", format(as.integer(result_list$variance), big.mark = ",")), end = "\n")
 cat(sprintf("표준편차: %s", format_time(as.integer(result_list$standard_deviation))), end = "\n")
 cat(sprintf(
   "하루 평균 통화 시간: %s", format_time(as.integer(result_list$total_seconds / result_list$period_days))
