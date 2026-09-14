@@ -32,6 +32,12 @@ date_counts <- table(dates)
 result_list$most_call_date <- names(date_counts)[which.max(date_counts)]
 result_list$most_call_count <- max(date_counts)
 
+result_list$first_call_date <- min(dates)
+result_list$last_call_date <- max(dates)
+result_list$period_days <- as.numeric(result_list$last_call_date - result_list$first_call_date) + 1
+
+result_list$average_calls_per_day <- result_list$length / result_list$period_days
+
 daily_seconds <- tapply(
   raw_data_seconds,
   dates,
@@ -43,7 +49,11 @@ result_list$most_call_time <- max(daily_seconds)
 
 cat(sprintf("총 통화 횟수: %d회", result_list$length), end = "\n")
 cat(total_format_time(total_seconds = result_list$total_seconds), end = "\n")
+cat(sprintf(
+  "통화 기록 기간: %s ~ %s, %d일", result_list$first_call_date, result_list$last_call_date, result_list$period_days
+), end = "\n")
 cat(sprintf("평균 통화 시간: %s (회당)", format_time(as.integer(result_list$average_seconds))), end = "\n")
+cat(sprintf("평균 통화 횟수: %.2f회", result_list$average_calls_per_day), end = "\n")
 cat(sprintf("중앙값(중위수): %s", format_time(as.integer(result_list$median_seconds))), end = "\n")
 cat(sprintf("분산: %s초²", as.integer(result_list$variance)), end = "\n")
 cat(sprintf("표준편차: %s", format_time(as.integer(result_list$standard_deviation))), end = "\n")
