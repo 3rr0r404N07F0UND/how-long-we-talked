@@ -8,7 +8,7 @@ total_format_time <- function(total_seconds) {
   total_minutes <- total_hours * 60 + minutes
 
   paste(
-    sprintf("총 통화 시간: %s시간 %d분 %d초", format(total_hours, big.mark = ","), minutes, seconds),
+    sprintf("%s시간 %d분 %d초", format(total_hours, big.mark = ","), minutes, seconds),
     sprintf("(= %s분 %d초)", format(total_minutes, big.mark = ","), seconds),
     sprintf("(= %s초)", format(total_seconds, big.mark = ",")),
     sprintf("약 %s일 %d시간 %d분 %d초", format(days, big.mark = ","), hours, minutes, seconds),
