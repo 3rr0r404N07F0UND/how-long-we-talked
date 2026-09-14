@@ -1,3 +1,7 @@
+#TODO: 상관계수 만들기
+#TODO: 왜도 만들기
+#TODO: 첨도 만들기
+
 source("./total_format_time.r")
 source("./format_time.r")
 
@@ -16,10 +20,6 @@ result_list <- list()
 
 result_list$length <- length(raw_data$duration)
 result_list$total_seconds <- sum(raw_data_seconds)
-result_list$total_minutes <- result_list$total_seconds %/% 60
-result_list$total_hours <- result_list$total_minutes %/% 60
-result_list$total_days <- result_list$total_hours %/% 24
-result_list$total_years <- result_list$total_days %/% 365
 result_list$average_seconds <- mean(raw_data_seconds)
 result_list$median_seconds <- median(raw_data_seconds)
 result_list$max_seconds <- max(raw_data_seconds)
@@ -27,25 +27,33 @@ result_list$min_seconds <- min(raw_data_seconds)
 result_list$variance <- var(raw_data_seconds)
 result_list$standard_deviation <- sd(raw_data_seconds)
 
-dates <- as.Date(raw_data$datetime)
-date_counts <- table(dates)
-result_list$most_call_date <- names(date_counts)[which.max(date_counts)]
-result_list$most_call_count <- max(date_counts)
+daily_stats <- local({
+  daily_seconds <- tapply(
+    raw_data_seconds,
+    as.Date(raw_data$datetime),
+    sum
+  )
 
-result_list$first_call_date <- min(dates)
-result_list$last_call_date <- max(dates)
+  daily_stats <- data.frame(
+    date = as.Date(names(daily_seconds)),
+    total_second = as.numeric(daily_seconds)
+  )
+
+  daily_stats <- merge(
+    daily_stats,
+    setNames(as.data.frame(table(as.Date(raw_data$datetime))), c("date", "call_count")),
+    by = "date"
+  )
+})
+
+result_list$most_call_date <- daily_stats$date[which.max(daily_stats$call_count)]
+result_list$most_call_count <- max(daily_stats$call_count)
+result_list$most_call_time_date <- (daily_stats$date)[which.max(daily_stats$total_second)]
+result_list$most_call_time <- max(daily_stats$total_second)
+result_list$first_call_date <- min(daily_stats$date)
+result_list$last_call_date <- max(daily_stats$date)
 result_list$period_days <- as.numeric(result_list$last_call_date - result_list$first_call_date) + 1
-
 result_list$average_calls_per_day <- result_list$length / result_list$period_days
-
-daily_seconds <- tapply(
-  raw_data_seconds,
-  dates,
-  sum
-)
-
-result_list$most_call_time_date <- names(daily_seconds)[which.max(daily_seconds)]
-result_list$most_call_time <- max(daily_seconds)
 
 cat(sprintf("총 통화 횟수: %d회", result_list$length), end = "\n")
 cat(sprintf("총 통화 시간: %s", total_format_time(total_seconds = result_list$total_seconds)), end = "\n")
