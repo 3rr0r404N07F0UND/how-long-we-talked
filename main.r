@@ -1,9 +1,6 @@
-#TODO: 상관계수 만들기
-#TODO: 왜도 만들기
-#TODO: 첨도 만들기
-
 source("./total_format_time.r")
 source("./format_time.r")
+
 
 raw_data <- read.csv("phone.csv", fileEncoding = "UTF-8")
 
@@ -54,6 +51,12 @@ result_list$first_call_date <- min(daily_stats$date)
 result_list$last_call_date <- max(daily_stats$date)
 result_list$period_days <- as.numeric(result_list$last_call_date - result_list$first_call_date) + 1
 result_list$average_calls_per_day <- result_list$length / result_list$period_days
+result_list$cor_call_count_daily_total_time <- cor(daily_stats$call_count, daily_stats$total_second)
+result_list$cor_call_count_daily_average_time <- cor(
+  daily_stats$call_count, daily_stats$total_second / daily_stats$call_count
+)
+result_list$skewness <- skewness(raw_data_seconds)
+result_list$kurtosis <- kurtosis(raw_data_seconds)
 
 cat(sprintf("총 통화 횟수: %d회", result_list$length), end = "\n")
 cat(sprintf("총 통화 시간: %s", total_format_time(total_seconds = result_list$total_seconds)), end = "\n")
@@ -64,11 +67,20 @@ cat(sprintf("평균 통화 시간: %s (회당)", format_time(as.integer(result_l
 cat(sprintf("중앙값(중위수): %s", format_time(as.integer(result_list$median_seconds))), end = "\n")
 cat(sprintf("분산: %s초²", format(as.integer(result_list$variance), big.mark = ",")), end = "\n")
 cat(sprintf("표준편차: %s", format_time(as.integer(result_list$standard_deviation))), end = "\n")
+cat(sprintf("왜도: %f", result_list$skewness), end = "\n")
+cat(sprintf("첨도: %f", result_list$kurtosis), end = "\n")
 cat(sprintf(
   "하루 평균 통화 시간: %s", format_time(as.integer(result_list$total_seconds / result_list$period_days))
 ), end = "\n")
 cat(sprintf("하루 평균 통화 횟수: %.2f회", result_list$average_calls_per_day), end = "\n")
-
+cat(sprintf(
+  "일일 통화 횟수와 일일 총 통화시간의 상관계수: %f",
+  result_list$cor_call_count_daily_total_time
+), end = "\n")
+cat(sprintf(
+  "일일 통화 횟수와 일일 평균 통화시간의 상관계수: %f",
+  result_list$cor_call_count_daily_average_time
+), end = "\n")
 cat(sprintf("가장 긴 통화: %s", format_time(as.integer(result_list$max_seconds))), end = "\n")
 cat(sprintf("가장 짧은 통화: %s", format_time(as.integer(result_list$min_seconds))), end = "\n")
 cat(sprintf("가장 전화 많이 한 날: %s (%d회)", result_list$most_call_date, result_list$most_call_count), end = "\n")
