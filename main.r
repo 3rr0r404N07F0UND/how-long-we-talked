@@ -58,6 +58,15 @@ result_list$cor_call_count_daily_average_time <- cor(
 result_list$skewness <- skewness(raw_data_seconds)
 result_list$kurtosis <- kurtosis(raw_data_seconds)
 
+result_list$q1 <- quantile(raw_data_seconds, 0.25)
+result_list$q2 <- quantile(raw_data_seconds, 0.50)
+result_list$q3 <- quantile(raw_data_seconds, 0.75)
+
+result_list$iqr <- IQR(raw_data_seconds)
+result_list$mad <- mad(raw_data_seconds)
+
+result_list$cv <- result_list$standard_deviation / result_list$average_seconds
+
 cat(sprintf("총 통화 횟수: %d회", result_list$length), end = "\n")
 cat(sprintf("총 통화 시간: %s", total_format_time(total_seconds = result_list$total_seconds)), end = "\n")
 cat(sprintf(
@@ -67,6 +76,12 @@ cat(sprintf("평균 통화 시간: %s (회당)", format_time(as.integer(result_l
 cat(sprintf("중앙값(중위수): %s", format_time(as.integer(result_list$median_seconds))), end = "\n")
 cat(sprintf("분산: %s초²", format(as.integer(result_list$variance), big.mark = ",")), end = "\n")
 cat(sprintf("표준편차: %s", format_time(as.integer(result_list$standard_deviation))), end = "\n")
+cat(sprintf("제1사분위수(Q1): %s", format_time(as.integer(result_list$q1))), end = "\n")
+cat(sprintf("제2사분위수(Q2): %s", format_time(as.integer(result_list$q2))), end = "\n")
+cat(sprintf("제3사분위수(Q3): %s", format_time(as.integer(result_list$q3))), end = "\n")
+cat(sprintf("사분위범위(IQR): %s", format_time(as.integer(result_list$iqr))), end = "\n")
+cat(sprintf("중앙절대편차(MAD): %s", format_time(as.integer(result_list$mad))), end = "\n")
+cat(sprintf("변동계수(CV): %f%%", result_list$cv * 100), end = "\n")
 cat(sprintf("왜도: %f", result_list$skewness), end = "\n")
 cat(sprintf("첨도: %f", result_list$kurtosis), end = "\n")
 cat(sprintf(
