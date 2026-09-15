@@ -102,3 +102,91 @@ cat(sprintf("가장 전화 많이 한 날: %s (%d회)", result_list$most_call_da
 cat(sprintf(
   "가장 오래 통화한 날: %s (%s)", result_list$most_call_time_date, format_time(result_list$most_call_time)
 ), end = "\n")
+
+hist_result <- hist(
+  raw_data_seconds / 60,
+  xlab = "통화시간 (분)",
+  ylab = "통화 횟수",
+  breaks = seq(0, ceiling(result_list$max_seconds / 60 / 10) * 10, by = 10),
+  main = "통화시간 분포",
+  xaxt = "n",
+  yaxt = "n"
+)
+
+axis(
+  1,
+  at = seq(0, ceiling(result_list$max_seconds / 60 / 60) * 60, by = 60)
+)
+
+axis(
+  2,
+  at = seq(0, ceiling(max(hist_result$counts) / 10) * 10, by = 10)
+)
+
+plot(
+  daily_stats$date,
+  daily_stats$total_second / 3600,
+  type = "l",
+  xlab = "날짜",
+  ylab = "총 통화시간 (시간)",
+  main = "날짜별 총 통화시간",
+  xaxt = "n"
+)
+
+axis.Date(
+  1,
+  at = seq(min(daily_stats$date), max(daily_stats$date), by = "1 month"),
+  format = "%y/%m/%d"
+)
+
+plot(
+  daily_stats$call_count,
+  daily_stats$total_second / 3600,
+  xlab = "일일 통화 횟수",
+  ylab = "일일 총 통화 시간 (시간)",
+  main = "일일 통화 횟수 vs 일일 총 통화 시간",
+  pch = 19,
+  xaxt = "n",
+  yaxt = "n"
+)
+
+axis(
+  1,
+  at = seq(0, result_list$most_call_count, by = 1)
+)
+
+axis(
+  2,
+  at = seq(0, ceiling(result_list$most_call_time / 3600 / 10) * 10, by = 1)
+)
+
+boxplot(
+  raw_data_seconds / 60,
+  horizontal = TRUE,
+  xlab = "통화시간 (분)",
+  ylab = "통화시간 분포",
+  xaxt = "n"
+)
+
+axis(
+  1,
+  at = seq(0, ceiling(result_list$max_seconds / 60 / 60) * 60, by = 60)
+)
+
+pie(
+  table(
+    cut(
+      raw_data_seconds / 60,
+      breaks = c(0, 10, 30, 60, 120, Inf),
+      labels = c(
+        "10분 이하",
+        "10 ~ 30분",
+        "30 ~ 60분",
+        "60 ~ 120분",
+        "120분 이상"
+      ),
+      right = FALSE
+    )
+  ),
+  main = "통화시간 구간별 비율"
+)
