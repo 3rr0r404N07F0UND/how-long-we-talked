@@ -1,7 +1,6 @@
 source("./total_format_time.r")
 source("./format_time.r")
 
-
 raw_data <- read.csv("phone.csv", fileEncoding = "UTF-8")
 
 raw_data_seconds <- sapply(raw_data$duration, function(raw_time) {
@@ -103,6 +102,8 @@ cat(sprintf(
   "가장 오래 통화한 날: %s (%s)", result_list$most_call_time_date, format_time(result_list$most_call_time)
 ), end = "\n")
 
+# stem(floor(daily_stats$total_second / 60), scale = 2)
+
 hist_result <- hist(
   raw_data_seconds / 60,
   xlab = "통화시간 (분)",
@@ -189,4 +190,38 @@ pie(
     )
   ),
   main = "통화시간 구간별 비율"
+)
+
+quarto_render(
+  input = "README.qmd",
+  output_file = "README.md",
+  execute_params = list(
+    length = result_list$length,
+    total_time = strsplit(total_format_time(total_seconds = result_list$total_seconds), "\n"),
+    duration = sprintf(
+      "통화 기록 기간: %s ~ %s, %d일", result_list$first_call_date, result_list$last_call_date, result_list$period_days
+    ),
+    avg = format_time(as.integer(result_list$average_seconds)),
+    mid = format_time(as.integer(result_list$median_seconds)),
+    var = format(as.integer(result_list$variance), big.mark = ","),
+    sd = format_time(as.integer(result_list$standard_deviation)),
+    q1 = format_time(as.integer(result_list$q1)),
+    q2 = format_time(as.integer(result_list$q2)),
+    q3 = format_time(as.integer(result_list$q3)),
+    iqr = format_time(as.integer(result_list$iqr)),
+    mad = format_time(as.integer(result_list$mad)),
+    cv = result_list$cv * 100,
+    skewness = result_list$skewness,
+    kurtosis = result_list$kurtosis,
+    daily_avg = format_time(as.integer(result_list$total_seconds / result_list$period_days)),
+    avg_calls_per_day = round(result_list$average_calls_per_day, 2),
+    cor_call_count_daily_total_time = result_list$cor_call_count_daily_total_time,
+    cor_call_count_daily_average_time = result_list$cor_call_count_daily_average_time,
+    longest_time = format_time(as.integer(result_list$max_seconds)),
+    shortest_time = format_time(as.integer(result_list$min_seconds)),
+    most_call_date = toString((result_list$most_call_date)),
+    most_call_count = result_list$most_call_count,
+    most_call_time_date = toString(result_list$most_call_time_date),
+    most_call_time = format_time(result_list$most_call_time)
+  )
 )
